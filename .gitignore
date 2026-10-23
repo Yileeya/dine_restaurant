@@ -1,0 +1,23 @@
+node_modules/
+
+# Wrangler 本機暫存，包含本機 D1 資料庫
+.wrangler/
+
+# 本機機敏設定：帳密、secret（範本檔要保留）
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+
+# wrangler types 產生的型別檔（npm run types 重新產生）
+worker-configuration.d.ts
+
+# IDE 個人設定
+.idea/
+.vscode/
+
+# 系統檔與 log
+.DS_Store
+Thumbs.db
+*.log
