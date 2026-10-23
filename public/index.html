@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reservations · dine</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main>
+  <h1>Reservations</h1>
+
+  <form id="booking-form" data-testid="booking-form" novalidate>
+    <!-- BR-06、BR-07：後端錯誤顯示在表單層級 -->
+    <div class="form-error" data-testid="form-error" role="alert" hidden></div>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" autocomplete="name" data-testid="name">
+      <div class="error" id="name-error" data-testid="name-error"></div>
+    </div>
+
+    <div class="field">
+      <label for="phone">Phone</label>
+      <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="0912345678" data-testid="phone">
+      <div class="error" id="phone-error" data-testid="phone-error"></div>
+    </div>
+
+    <div class="field">
+      <label for="date">Date</label>
+      <input id="date" name="date" type="date" data-testid="date">
+      <div class="error" id="date-error" data-testid="date-error"></div>
+    </div>
+
+    <fieldset class="field">
+      <legend>Time</legend>
+      <div class="slots" id="slots" data-testid="slots"></div>
+      <div class="error" id="slot-error" data-testid="slot-error"></div>
+    </fieldset>
+
+    <div class="field">
+      <label id="guests-label">Guests</label>
+      <div class="stepper" role="group" aria-labelledby="guests-label">
+        <button type="button" id="guests-minus" aria-label="Decrease guests" data-testid="guests-minus">−</button>
+        <output id="guests" aria-live="polite" data-testid="guests">1</output>
+        <button type="button" id="guests-plus" aria-label="Increase guests" data-testid="guests-plus">+</button>
+      </div>
+    </div>
+
+    <button type="submit" class="primary" data-testid="submit">MAKE RESERVATION</button>
+  </form>
+
+  <section id="success" data-testid="success" hidden>
+    <h2>Reservation confirmed</h2>
+    <p data-testid="success-summary"></p>
+    <a href="/">Make another reservation</a>
+  </section>
+</main>
+<script src="/booking.js"></script>
+</body>
+</html>
