@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin login · dine</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main>
+  <h1>Admin login</h1>
+  <form id="login-form" data-testid="login-form" novalidate>
+    <div class="form-error" data-testid="login-error" role="alert" hidden></div>
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" type="text" autocomplete="username" data-testid="username">
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" data-testid="password">
+    </div>
+    <button type="submit" class="primary" data-testid="login-submit">LOG IN</button>
+  </form>
+</main>
+<script>
+  const form = document.getElementById('login-form');
+  const err = form.querySelector('[data-testid="login-error"]');
+  const btn = form.querySelector('[data-testid="login-submit"]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    err.hidden = true;
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value,
+        }),
+      });
+      if (res.status === 204) return location.assign('/admin/reservations');
+      err.textContent = 'Invalid username or password'; // BR-09：不區分哪一項錯
+      err.hidden = false;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

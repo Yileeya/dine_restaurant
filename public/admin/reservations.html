@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reservations admin · dine</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wide">
+  <div class="topbar">
+    <h1>Reservations</h1>
+    <button type="button" id="logout" data-testid="logout">Log out</button>
+  </div>
+
+  <!-- BR-10：依日期、姓名或電話篩選 -->
+  <form class="filters" id="filters" data-testid="filters">
+    <input type="date" id="filter-date" aria-label="Filter by date" data-testid="filter-date">
+    <input type="search" id="filter-q" placeholder="Name or phone" aria-label="Search by name or phone" data-testid="filter-q">
+    <button type="submit" data-testid="filter-apply">Search</button>
+    <button type="button" id="filter-clear" data-testid="filter-clear">Clear</button>
+  </form>
+
+  <table data-testid="reservation-table">
+    <thead>
+      <tr><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Guests</th><th><span class="sr-only">Actions</span></th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p id="empty" data-testid="empty-state" hidden>No reservations</p>
+</main>
+
+<!-- BR-11：刪除前二次確認 -->
+<dialog id="confirm" data-testid="delete-dialog">
+  <p><strong>Delete this reservation?</strong></p>
+  <p id="confirm-detail"></p>
+  <div class="actions">
+    <button type="button" id="confirm-cancel" data-testid="delete-cancel">Cancel</button>
+    <button type="button" id="confirm-delete" class="danger" data-testid="delete-confirm">Delete</button>
+  </div>
+</dialog>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let pendingId = null;
+
+  async function api(url, opts) {
+    const res = await fetch(url, opts);
+    if (res.status === 401) { location.replace('/admin/login'); throw new Error('unauthorized'); } // BR-09
+    return res;
+  }
+
+  async function load() {
+    const params = new URLSearchParams();
+    if ($('filter-date').value) params.set('date', $('filter-date').value);
+    if ($('filter-q').value.trim()) params.set('q', $('filter-q').value.trim());
+    const res = await api(`/api/admin/reservations?${params}`);
+    const { items } = await res.json();
+    $('rows').innerHTML = '';
+    for (const r of items) {
+      const tr = document.createElement('tr');
+      tr.dataset.testid = 'reservation-row';
+      for (const v of [r.date, r.slot, r.name, r.phone, r.guests]) {
+        const td = document.createElement('td'); td.textContent = v; tr.append(td);
+      }
+      const td = document.createElement('td');
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'danger';
+      del.textContent = 'Delete';
+      del.dataset.testid = 'delete-button';
+      del.addEventListener('click', () => {
+        pendingId = r.id;
+        $('confirm-detail').textContent = `${r.name} · ${r.date} ${r.slot} · ${r.guests} guest(s)`;
+        $('confirm').showModal();
+      });
+      td.append(del); tr.append(td);
+      $('rows').append(tr);
+    }
+    $('empty').hidden = items.length > 0;
+  }
+
+  $('filters').addEventListener('submit', (e) => { e.preventDefault(); load(); });
+  $('filter-clear').addEventListener('click', () => { $('filter-date').value = ''; $('filter-q').value = ''; load(); });
+  $('confirm-cancel').addEventListener('click', () => { pendingId = null; $('confirm').close(); });
+  $('confirm-delete').addEventListener('click', async () => {
+    await api(`/api/admin/reservations/${pendingId}`, { method: 'DELETE' });
+    pendingId = null;
+    $('confirm').close();
+    load();
+  });
+  $('logout').addEventListener('click', async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
+    location.assign('/admin/login');
+  });
+  load();
+</script>
+</body>
+</html>
