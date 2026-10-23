@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import { sign, verify } from 'hono/jwt';
 import { SLOTS, MAX_GUESTS, SLOT_CAPACITY, BOOKING_WINDOW_DAYS, PHONE_PATTERN, TZ_OFFSET_HOURS } from './rules';
@@ -10,12 +11,24 @@ type Bindings = {
   ADMIN_PASS: string;
   SESSION_SECRET: string;
   ENABLE_TEST_API?: string;
+  CORS_ORIGINS?: string;
 };
 
 type ReservationInput = { name?: unknown; phone?: unknown; date?: unknown; slot?: unknown; guests?: unknown };
 
 const app = new Hono<{ Bindings: Bindings }>();
 const COOKIE = 'admin_session';
+
+// ---------- CORS：只允許 CORS_ORIGINS 列出的前端網址（逗號分隔）跨來源呼叫 ----------
+app.use('/api/*', cors({
+  origin: (origin, c) => {
+    const allowed = (c.env.CORS_ORIGINS ?? '').split(',').map((s: string) => s.trim()).filter(Boolean);
+    return allowed.includes(origin) ? origin : null;
+  },
+  allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['GET', 'POST', 'DELETE'],
+  maxAge: 600,
+}));
 
 // ---------- 日期工具（以台灣時間為準） ----------
 const today = () => new Date(Date.now() + TZ_OFFSET_HOURS * 3600_000).toISOString().slice(0, 10);
@@ -108,7 +121,8 @@ app.post('/api/admin/login', async (c) => {
   const token = await sign({ sub: 'admin', exp: Math.floor(Date.now() / 1000) + 8 * 3600 }, c.env.SESSION_SECRET);
   const secure = new URL(c.req.url).protocol === 'https:';
   setCookie(c, COOKIE, token, { httpOnly: true, secure, sameSite: 'Strict', path: '/', maxAge: 8 * 3600 });
-  return c.body(null, 204);
+  // 同網域頁面用 cookie；其他網站的前端改用回傳的 token（Authorization: Bearer）
+  return c.json({ token, expiresIn: 8 * 3600 });
 });
 
 app.post('/api/admin/logout', (c) => {
@@ -116,9 +130,10 @@ app.post('/api/admin/logout', (c) => {
   return c.body(null, 204);
 });
 
-// 後台 API 共用：驗證登入 cookie
+// 後台 API 共用：驗證登入狀態（外部前端用 Bearer token，同網域頁面用 cookie）
 const requireAdmin = async (c: any, next: () => Promise<void>) => {
-  const token = getCookie(c, COOKIE);
+  const auth = c.req.header('Authorization');
+  const token = auth?.startsWith('Bearer ') ? auth.slice(7) : getCookie(c, COOKIE);
   try {
     if (!token) throw new Error('no token');
     await verify(token, c.env.SESSION_SECRET, 'HS256');

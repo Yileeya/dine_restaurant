@@ -36,6 +36,7 @@ npm run db:init:remote
 npx wrangler secret put ADMIN_USER
 npx wrangler secret put ADMIN_PASS
 npx wrangler secret put SESSION_SECRET
+npx wrangler secret put CORS_ORIGINS    # 選用：允許的外部前端網址，逗號分隔
 npm run deploy                      # 輸出 https://dine-restaurant.<你的子網域>.workers.dev
 ```
 
@@ -47,7 +48,7 @@ npm run deploy                      # 輸出 https://dine-restaurant.<你的子�
 | --- | --- | --- | --- |
 | GET | `/api/availability?date=YYYY-MM-DD` | 各時段剩餘名額、可預約日期範圍 | BR-04、12 |
 | POST | `/api/reservations` | 建立預約 `{name, phone, date, slot, guests}` | BR-01~08 |
-| POST | `/api/admin/login` | `{username, password}`，成功設 HttpOnly cookie | BR-09 |
+| POST | `/api/admin/login` | `{username, password}`，成功回 `{token, expiresIn}` 並設 HttpOnly cookie | BR-09 |
 | POST | `/api/admin/logout` | 清除 cookie | — |
 | GET | `/api/admin/reservations?date=&q=` | 需登入；`q` 比對姓名或電話 | BR-09、10 |
 | DELETE | `/api/admin/reservations/:id` | 需登入 | BR-09、11 |
@@ -55,6 +56,11 @@ npm run deploy                      # 輸出 https://dine-restaurant.<你的子�
 | POST | `/api/test/seed` | `{reservations: [...]}` 直接寫入前置資料（僅測試環境） | — |
 
 錯誤格式：`400 {error:"VALIDATION_ERROR", fields:{phone:"INVALID_PHONE"}}`、`409 {error:"SLOT_FULL", remaining:5}`、`409 {error:"DUPLICATE"}`、`401 {error:"UNAUTHORIZED"}`。
+
+## 從其他網站的前端呼叫 API（CORS）
+
+- 只有 `CORS_ORIGINS` 列出的網址可以跨來源呼叫，例如 `https://my-frontend.vercel.app,http://localhost:5173`。
+- 後台 API 請用登入回傳的 token：`Authorization: Bearer <token>`。cookie 是 `SameSite=Strict`，只給同網域的 `public/` 頁面使用。
 
 ## 注意
 

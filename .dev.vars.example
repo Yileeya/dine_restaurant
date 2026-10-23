@@ -4,3 +4,5 @@ ADMIN_PASS=change-me
 SESSION_SECRET=any-long-random-string
 # 只在本機／測試環境開啟，正式環境不要設定
 ENABLE_TEST_API=true
+# 允許跨來源呼叫 API 的前端網址，逗號分隔（同網域的 public/ 頁面不需要列）
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
