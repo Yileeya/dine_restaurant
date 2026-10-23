@@ -1,0 +1,22 @@
+{
+  "name": "dine_restaurant",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init:local": "wrangler d1 execute restaurant-db --local --file=schema.sql",
+    "db:init:remote": "wrangler d1 execute restaurant-db --remote --file=schema.sql",
+    "types": "wrangler types"
+  },
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0",
+    "typescript": "^5.6.0"
+  }
+}
