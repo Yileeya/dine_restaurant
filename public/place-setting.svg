@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 330" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- 前台預約頁面板的裝飾：俯視的一份餐具（餐巾、叉、青花盤、刀、水杯） -->
+  <rect x="14" y="96" width="64" height="210" rx="6" fill="#fff" fill-opacity=".1" stroke-opacity=".35" stroke-width="1.5"/>
+  <path d="M14 140h64M14 146h64" stroke-opacity=".3" stroke-width="1.5"/>
+
+  <g stroke-opacity=".9">
+    <path d="M34 82v44M42 82v44M50 82v44M58 82v44" stroke-width="3.5"/>
+    <path d="M31 118q0 34 15 36q15-2 15-36" stroke-width="3.5"/>
+    <path d="M46 154v146" stroke-width="8"/>
+  </g>
+
+  <circle cx="210" cy="188" r="116" fill="#fff" fill-opacity=".08" stroke-opacity=".9" stroke-width="2.5"/>
+  <circle cx="210" cy="188" r="104" stroke-opacity=".7" stroke-width="6" stroke-linecap="butt" stroke-dasharray="2.5 8.4"/>
+  <circle cx="210" cy="188" r="90" stroke-opacity=".5" stroke-width="1.5"/>
+  <circle cx="210" cy="188" r="62" fill="#fff" fill-opacity=".06" stroke-opacity=".55" stroke-width="1.5"/>
+  <g transform="translate(210 188)" fill="#fff" fill-opacity=".85" stroke="none">
+    <ellipse rx="7" ry="20" cy="-18"/>
+    <ellipse rx="7" ry="20" cy="-18" transform="rotate(72)"/>
+    <ellipse rx="7" ry="20" cy="-18" transform="rotate(144)"/>
+    <ellipse rx="7" ry="20" cy="-18" transform="rotate(216)"/>
+    <ellipse rx="7" ry="20" cy="-18" transform="rotate(288)"/>
+  </g>
+  <circle cx="210" cy="188" r="7" fill="#223f9a" stroke="none"/>
+
+  <g stroke-opacity=".9">
+    <path d="M372 110q22 40 14 96h-14z" fill="#fff" fill-opacity=".85" stroke-width="2"/>
+    <path d="M378 206v94" stroke-width="8"/>
+  </g>
+
+  <circle cx="352" cy="50" r="30" fill="#fff" fill-opacity=".07" stroke-opacity=".85" stroke-width="2.5"/>
+  <circle cx="352" cy="50" r="21" stroke-opacity=".4" stroke-width="1.5"/>
+</svg>
