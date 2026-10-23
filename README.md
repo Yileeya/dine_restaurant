@@ -3,6 +3,11 @@
 單一 Cloudflare Worker：`public/` 是前端（原生 HTML/JS），`src/` 是 API（Hono），資料存在 D1。
 前後端同網域，不需處理 CORS。規則數值集中在 `src/rules.ts`，對應[規格書](docs/規格書_v1.xlsx) Rules 工作表。
 
+## Demo
+
+- 前台：https://dine-restaurant.yilee.workers.dev
+- 後台：https://dine-restaurant.yilee.workers.dev/admin/login
+
 ## 環境需求
 
 - Node.js 24 以上（開發時使用 24.22.1）
