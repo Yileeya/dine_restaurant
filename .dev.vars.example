@@ -1,0 +1,6 @@
+# 複製成 .dev.vars，只給本機 wrangler dev 使用
+ADMIN_USER=admin
+ADMIN_PASS=change-me
+SESSION_SECRET=any-long-random-string
+# 只在本機／測試環境開啟，正式環境不要設定
+ENABLE_TEST_API=true

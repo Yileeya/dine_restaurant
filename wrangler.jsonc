@@ -1,0 +1,11 @@
+{
+  "name": "dine-restaurant", // 會成為 workers.dev 網址的一部分，只能用英數與連字號
+  "main": "src/index.ts",
+  "compatibility_date": "2025-09-01",
+  // 前端靜態檔放 public/；/api/* 先進 Worker，其餘交給靜態檔
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "d1_databases": [
+    // database_id 在 `wrangler d1 create restaurant-db` 後貼上
+    { "binding": "DB", "database_name": "restaurant-db", "database_id": "REPLACE_ME" }
+  ]
+}
